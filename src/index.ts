@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import fetch from "node-fetch";
 import NodeCache from "node-cache";
+import cors from "cors";
 
 const PORT = 9000;
 const KRAKEN_API_URL = "https://api.kraken.com/0/public/Ticker";
@@ -11,6 +12,7 @@ const cache = new NodeCache({ stdTTL: TIME_TO_LIVE, checkperiod: 0 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 const getPrice = async (currency1: string, currency2: string) => {
   const res = await fetch(
@@ -30,6 +32,7 @@ const getPrice = async (currency1: string, currency2: string) => {
 
 app.get(
   "/price/:currency_1/:currency_2",
+  cors(),
   async (req: Request, response: Response): Promise<Response> => {
     const currency1 = req.params.currency_1;
     const currency2 = req.params.currency_2;
