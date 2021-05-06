@@ -5,7 +5,7 @@ import cors from "cors";
 
 const PORT = 9000;
 const KRAKEN_API_URL = "https://api.kraken.com/0/public/Ticker";
-const TIME_TO_LIVE = 2 * 60; // invalidate cache after 2 minutes
+const TIME_TO_LIVE = 60; // invalidate cache after 1 minute
 
 const app: Application = express();
 const cache = new NodeCache({ stdTTL: TIME_TO_LIVE, checkperiod: 0 });
