@@ -31,7 +31,7 @@ const getPrice = async (currency1: string, currency2: string) => {
 };
 
 app.get(
-  "/price/:currency_1/:currency_2",
+  "/value/:currency_1/:currency_2",
   cors(),
   async (req: Request, response: Response): Promise<Response> => {
     const currency1 = req.params.currency_1;
