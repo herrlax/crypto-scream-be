@@ -7,8 +7,13 @@ const PORT = 9000;
 const KRAKEN_API_URL = "https://api.kraken.com/0/public/Ticker";
 const TIME_TO_LIVE = 60; // invalidate cache after 1 minute
 
+
 const app: Application = express();
 const cache = new NodeCache({ stdTTL: TIME_TO_LIVE, checkperiod: 0 });
+const notFound = {
+  code: '404',
+  message: 'Not Found'
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +32,31 @@ const getPrice = async (currency1: string, currency2: string) => {
     };
   }
 
-  return { price: data.result[Object.keys(data.result)[0]].c[0] };
+  
+  if(!data.result) {
+    return {
+      error: notFound
+    }
+  }
+
+  const coinPairArray = Object.keys(data.result)
+
+  if(coinPairArray.length === 0) {
+    return {
+      error: notFound
+    }
+  }
+
+  const coinPair = coinPairArray[0]
+  const priceData = data.result[coinPair];
+  
+  if(!priceData?.c || priceData.c.length === 0) {
+    return {
+      error: notFound
+    } 
+  }
+
+  return { price: priceData.c[0] };
 };
 
 app.get(
@@ -65,6 +94,6 @@ try {
   app.listen(PORT, (): void => {
     console.info(`Listening on port ${PORT}`);
   });
-} catch (error) {
+} catch (error: any) {
   console.error(error.message);
 }
